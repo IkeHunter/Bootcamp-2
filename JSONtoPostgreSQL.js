@@ -23,6 +23,7 @@
   Read - artilce to learn more about environment variables - https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786
 */
 //ADD CODE HERE to connect to you database
+const sequelize = new Sequelize(process.env.API_URL);
 
 //Testing that the .env file is working - This should print out the port number
 console.log(process.env.PORT); //Should print out 8080 
@@ -41,14 +42,26 @@ console.log(process.env.API_Key); //Should print out "Key Not set - starter code
     // Errors-Check out this resource for an idea of the general format err objects and Throwing an existing object.
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw#throwing_an_existing_object
     if (err) throw err;
-    console.log(data);
+    // console.log(data);
 
     //Save and parse the data from the listings.json file into a variable, so that we can iterate through each instance - Similar to Bootcamp#1
    //ADD CODE HERE
+    const listingData = JSON.parse(data);
+    
+    for (let entry of listingData.entries) {
+      console.log("\nENTRY\n", entry)
+      let payload = {
+        code: entry.code,
+        name: entry.name,
+        address: entry.coordinates ? entry.address : null,
+        latitude: entry.coordinates ? entry.coordinates.latitude : null,
+        longitude: entry.coordinates ? entry.coordinates.longitude : null
+      }
+      Listing.create(payload);
+    }
   
      //Use Sequelize create a new row in our database for each entry in our listings.json file using the Listing model we created in ListingModel.js
     // to https://sequelize.org/docs/v6/core-concepts/model-instances/#creating-an-instance
-     //ADD CODE HERE
 
     });
 } catch (error) {
